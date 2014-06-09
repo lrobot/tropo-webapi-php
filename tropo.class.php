@@ -324,6 +324,29 @@ class Tropo extends BaseClass {
     }
     $this->say = array(sprintf('%s', $say));
   }
+  
+    /**
+  * When the current session is a voice channel this key will either play a message or an audio file from a URL.
+  * In the case of an text channel it will send the text back to the user via i nstant messaging or SMS.
+  *
+  * @param string|Say $say
+  * @param array $params
+  * @see https://www.tropo.com/docs/webapi/say.htm
+  */
+  public function cloudlog($logcontent, Array $params=NULL) {
+    if(!is_object($logcontent)) {
+      $p = array('level', 'format', 'event','voice', 'allowSignals');
+      $value = $logcontent;
+      foreach ($p as $option) {
+        $$option = null;
+        if (is_array($params) && array_key_exists($option, $params)) {
+          $$option = $params[$option];
+        }
+      }
+      $logcontent = new CloudLog($level, $value);
+    }
+    $this->cloudlog = array(sprintf('%s', $logcontent));
+  }
 
   /**
   * Allows Tropo applications to begin recording the current session.
@@ -1483,6 +1506,36 @@ class Say extends BaseClass {
     if(isset($this->_as)) { $this->as = $this->_as; }
     if(isset($this->_voice)) { $this->voice = $this->_voice; }
     if(isset($this->_allowSignals)) { $this->allowSignals = $this->_allowSignals; }
+    return $this->unescapeJSON(json_encode($this));
+  }
+}
+
+class CloudLog extends BaseClass {
+
+  private $_value;
+  private $_level;
+
+  /**
+  * Class constructor
+  *
+  * @param string $value
+  * @param SayAs $as
+  * @param string $event
+  * @param string $voice
+  * @param string|array $allowSignals
+  */
+  public function __construct($value, $level=NULL) {
+    $this->_value = $value;
+    $this->_level = $level;
+  }
+
+  /**
+  * Renders object in JSON format.
+  *
+  */
+  public function __toString() {
+    $this->value = $this->_value;
+    if(isset($this->_level)) { $this->level = $this->_level; }
     return $this->unescapeJSON(json_encode($this));
   }
 }
