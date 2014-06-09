@@ -343,7 +343,7 @@ class Tropo extends BaseClass {
           $$option = $params[$option];
         }
       }
-      $logcontent = new CloudLog($level, $value);
+      $logcontent = new CloudLog($value,$level);
     }
     $this->cloudlog = array(sprintf('%s', $logcontent));
   }
